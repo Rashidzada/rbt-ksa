@@ -1,0 +1,205 @@
+[
+    {
+        "model": "catalog.category",
+        "pk": 1,
+        "fields": {
+            "name": "Hotels",
+            "slug": "hotels",
+            "description": "Luxury transfers for guests & tourists.",
+            "icon_text": "<i class='fas fa-hotel'></i>",
+            "is_active": true
+        }
+    },
+    {
+        "model": "catalog.category",
+        "pk": 2,
+        "fields": {
+            "name": "Schools",
+            "slug": "schools",
+            "description": "Safe and reliable daily student transport.",
+            "icon_text": "<i class='fas fa-bus'></i>",
+            "is_active": true
+        }
+    },
+    {
+        "model": "catalog.category",
+        "pk": 3,
+        "fields": {
+            "name": "Corporate",
+            "slug": "corporate",
+            "description": "Buses and cars for staff & meetings.",
+            "icon_text": "<i class='fas fa-briefcase'></i>",
+            "is_active": true
+        }
+    },
+    {
+        "model": "catalog.category",
+        "pk": 4,
+        "fields": {
+            "name": "Luxury",
+            "slug": "luxury",
+            "description": "Premium cars for VIP movements.",
+            "icon_text": "<i class='fas fa-star'></i>",
+            "is_active": true
+        }
+    },
+    {
+        "model": "catalog.vehicle",
+        "pk": 1,
+        "fields": {
+            "category": 1,
+            "name": "Executive Airport Sedan",
+            "slug": "executive-airport-sedan",
+            "price_text": "450 SAR / Day",
+            "capacity_text": "4 Seats",
+            "description": "Quiet executive sedan for hotel and airport transfers across Riyadh and Jeddah.",
+            "features_text": "AC, WiFi, Water, Leather Seats, Meet & Greet",
+            "whatsapp_number": "",
+            "is_active": true,
+            "created_at": "2026-01-26T10:00:00Z"
+        }
+    },
+    {
+        "model": "catalog.vehicle",
+        "pk": 2,
+        "fields": {
+            "category": 2,
+            "name": "Standard School Bus",
+            "slug": "standard-school-bus",
+            "price_text": "3500 SAR / Month",
+            "capacity_text": "30 Seats",
+            "description": "Reliable yellow school bus with safety tracking and professional drivers.",
+            "features_text": "GPS Tracking, Safety Belts, Fire Extinguisher, CCTV",
+            "whatsapp_number": "",
+            "is_active": true,
+            "created_at": "2026-01-26T10:00:00Z"
+        }
+    },
+    {
+        "model": "catalog.vehicle",
+        "pk": 3,
+        "fields": {
+            "category": 3,
+            "name": "Corporate Shuttle Van",
+            "slug": "corporate-shuttle-van",
+            "price_text": "2500 SAR / Month",
+            "capacity_text": "12 Seats",
+            "description": "Daily staff shuttles with fixed routes and punctual drivers.",
+            "features_text": "AC, GPS Tracking, Daily Sanitization, USB Charging",
+            "whatsapp_number": "",
+            "is_active": true,
+            "created_at": "2026-01-26T10:00:00Z"
+        }
+    },
+    {
+        "model": "catalog.vehicle",
+        "pk": 4,
+        "fields": {
+            "category": 4,
+            "name": "Luxury VIP SUV",
+            "slug": "luxury-vip-suv",
+            "price_text": "900 SAR / Day",
+            "capacity_text": "6 Seats",
+            "description": "Premium SUV for VIP families and executive travel.",
+            "features_text": "AC, Leather Seats, WiFi, Privacy Glass, Concierge",
+            "whatsapp_number": "",
+            "is_active": true,
+            "created_at": "2026-01-26T10:00:00Z"
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 1,
+        "fields": {
+            "vehicle": 1,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800",
+            "is_primary": true,
+            "sort_order": 1
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 2,
+        "fields": {
+            "vehicle": 1,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&q=80&w=800",
+            "is_primary": false,
+            "sort_order": 2
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 3,
+        "fields": {
+            "vehicle": 2,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&q=80&w=800",
+            "is_primary": true,
+            "sort_order": 1
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 4,
+        "fields": {
+            "vehicle": 2,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800",
+            "is_primary": false,
+            "sort_order": 2
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 5,
+        "fields": {
+            "vehicle": 3,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1465447142348-e9952c393450?auto=format&fit=crop&q=80&w=800",
+            "is_primary": true,
+            "sort_order": 1
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 6,
+        "fields": {
+            "vehicle": 3,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&q=80&w=800",
+            "is_primary": false,
+            "sort_order": 2
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 7,
+        "fields": {
+            "vehicle": 4,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=80&w=800",
+            "is_primary": true,
+            "sort_order": 1
+        }
+    },
+    {
+        "model": "catalog.vehicleimage",
+        "pk": 8,
+        "fields": {
+            "vehicle": 4,
+            "image": "",
+            "image_url": "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&q=80&w=800",
+            "is_primary": false,
+            "sort_order": 2
+        }
+    },
+    {
+        "model": "core.sitesetting",
+        "pk": 1,
+        "fields": {
+            "support_whatsapp_number": "966500000000"
+        }
+    }
+]

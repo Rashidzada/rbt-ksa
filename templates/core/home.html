@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Riyadh Al Bilad Transport for KSA - Home{% endblock %}
+
+{% block content %}
+<section class="text-center mb-12">
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Riyadh Al Bilad Transport for KSA</h1>
+    <p class="text-gray-600 max-w-2xl mx-auto">Corporate, school, hotel, and luxury transport you can trust—modern fleets, professional drivers, and on‑time service across the Kingdom.</p>
+    <form method="get" class="mt-6 flex items-center justify-center gap-2">
+        <div class="relative w-full max-w-md">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search categories..."
+                class="w-full border border-gray-200 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
+            >
+        </div>
+        {% if query %}
+        <a href="{% url 'core:home' %}" class="text-sm text-gray-500 hover:text-green-700">Clear</a>
+        {% endif %}
+    </form>
+</section>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    {% for category in categories %}
+    <a href="{% url 'catalog:vehicle_list' category.slug %}" class="group block bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-xl hover:-translate-y-1 transition-all h-full">
+        <div class="bg-green-50 text-green-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl group-hover:scale-110 transition-transform">
+            {{ category.icon_text|safe }}
+        </div>
+        <h3 class="text-2xl font-bold mb-2">{{ category.name }}</h3>
+        <p class="text-sm text-gray-500">{{ category.description }}</p>
+    </a>
+    {% empty %}
+    {% if query %}
+    <p class="col-span-full text-center text-gray-500 py-12">No categories found for "{{ query }}".</p>
+    {% else %}
+    <p class="col-span-full text-center text-gray-500 py-12">No categories available at the moment.</p>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<section class="mt-20 py-20 bg-green-700 rounded-3xl text-white px-8 text-center">
+    <h2 class="text-3xl font-bold mb-6">Need a custom solution?</h2>
+    <p class="mb-8 text-green-100 max-w-xl mx-auto">We provide tailored transportation services for large events, long-term contracts, and special requirements.</p>
+    {% if site_settings.support_whatsapp_number %}
+    <a href="https://wa.me/{{ site_settings.support_whatsapp_number }}" target="_blank" rel="noopener noreferrer" class="inline-block bg-white text-green-700 px-8 py-3 rounded-full font-bold hover:bg-green-50 transition-colors">
+        Contact Us on WhatsApp
+    </a>
+    {% endif %}
+</section>
+{% endblock %}

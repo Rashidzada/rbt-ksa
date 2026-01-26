@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ vehicle.name }} - Riyadh Al Bilad Transport for KSA{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="{{ vehicle.description|truncatechars:160 }}">
+<meta property="og:title" content="{{ vehicle.name }} - Riyadh Al Bilad Transport for KSA">
+<meta property="og:description" content="{{ vehicle.description|truncatechars:160 }}">
+<meta property="og:type" content="product">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% with primary_image=vehicle.primary_image %}
+{% if primary_image %}
+<meta property="og:image"
+    content="{{ primary_image.resolved_url }}">
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center mb-8">
+    <a href="{% url 'catalog:vehicle_list' vehicle.category.slug %}"
+        class="mr-4 text-green-700 hover:bg-green-50 p-2 rounded-full transition-colors">
+        <i class="fas fa-arrow-left text-xl"></i>
+    </a>
+    <span class="text-gray-500">Back to {{ vehicle.category.name }}</span>
+</div>
+
+<div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+    <!-- Gallery -->
+    <div class="lg:w-1/2">
+        <div class="relative h-[400px] lg:h-full bg-gray-100">
+            {% with primary_image=vehicle.primary_image %}
+            <img id="main-image"
+                src="{% if primary_image %}{{ primary_image.resolved_url }}{% else %}https://via.placeholder.com/800x600?text=No+Image{% endif %}"
+                alt="{{ vehicle.name }}" class="w-full h-full object-cover">
+            {% endwith %}
+        </div>
+        {% if vehicle.images.all|length > 1 %}
+        <div class="flex gap-2 p-4 overflow-x-auto bg-gray-50">
+            {% for img in vehicle.images.all %}
+            <img src="{{ img.resolved_url }}"
+                onclick="document.getElementById('main-image').src=this.src"
+                alt="{{ vehicle.name }} gallery image"
+                class="w-20 h-20 object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-green-700 transition-all opacity-70 hover:opacity-100">
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Info -->
+    <div class="lg:w-1/2 p-8 lg:p-12">
+        <span class="inline-block bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-bold mb-4 uppercase tracking-widest">{{ vehicle.category.name }}</span>
+        <h1 class="text-4xl font-extrabold mb-4">{{ vehicle.name }}</h1>
+        <p class="text-2xl text-green-700 font-bold mb-6">{{ vehicle.price_text }}</p>
+
+        <div class="space-y-6 mb-8">
+            <div class="flex items-center gap-4 text-gray-600">
+                <div class="bg-gray-100 w-12 h-12 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs uppercase font-bold text-gray-400">Capacity</p>
+                    <p class="font-bold">{{ vehicle.capacity_text }}</p>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-lg border-b pb-2 mb-4">Description</h4>
+                <p class="text-gray-600 leading-relaxed">{{ vehicle.description }}</p>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-lg border-b pb-2 mb-4">Features</h4>
+                <div class="flex flex-wrap gap-2">
+                    {% for feature in vehicle.features_list %}
+                    <span class="bg-gray-100 px-3 py-1 rounded-lg text-sm font-medium text-gray-700">{{ feature }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% with wa_num=vehicle.whatsapp_number|default:site_settings.support_whatsapp_number %}
+        {% if wa_num %}
+        <a href="https://wa.me/{{ wa_num }}?text={{ vehicle.whatsapp_message|urlencode }}"
+            target="_blank" rel="noopener noreferrer"
+            class="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white py-4 rounded-xl font-bold text-lg hover:brightness-110 transition-all shadow-lg">
+            <i class="fab fa-whatsapp text-2xl"></i>
+            Book via WhatsApp
+        </a>
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}
