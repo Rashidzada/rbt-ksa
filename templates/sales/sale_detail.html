@@ -1,0 +1,117 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}{{ vehicle.title }} - Vehicles for Sale{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="{{ vehicle.description|truncatechars:160 }}">
+<meta property="og:title" content="{{ vehicle.title }} - Vehicles for Sale">
+<meta property="og:description" content="{{ vehicle.description|truncatechars:160 }}">
+<meta property="og:type" content="product">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% with primary_image=vehicle.primary_image %}
+{% if primary_image and primary_image.resolved_url %}
+<meta property="og:image" content="{{ primary_image.resolved_url }}">
+{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center mb-8">
+    <a href="{% url 'sales:vehicle_list' %}" class="mr-4 text-green-700 hover:bg-green-50 p-2 rounded-full transition-colors">
+        <i class="fas fa-arrow-left text-xl"></i>
+    </a>
+    <span class="text-gray-500">Back to Vehicles for Sale</span>
+</div>
+
+<div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+    <div class="flex flex-col lg:flex-row">
+        <div class="lg:w-1/2">
+            <div class="relative h-[400px] lg:h-full bg-gray-100">
+                {% with primary_image=vehicle.primary_image %}
+                {% if primary_image and primary_image.resolved_url %}
+                <img id="main-image" src="{{ primary_image.resolved_url }}" alt="{{ vehicle.title }}" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                    <i class="fas fa-car text-5xl"></i>
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <div class="lg:w-1/2 p-8 lg:p-12">
+        <span class="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 {% if vehicle.status == 'available' %}bg-green-100 text-green-700{% else %}bg-gray-200 text-gray-600{% endif %}">
+            {{ vehicle.get_status_display }}
+        </span>
+        <h1 class="text-4xl font-extrabold mb-2">{{ vehicle.title }}</h1>
+        <p class="text-2xl text-green-700 font-bold mb-2">{{ vehicle.price|floatformat:0 }} SAR</p>
+        <p class="text-gray-500 mb-6">
+            <i class="fas fa-map-marker-alt mr-1"></i>{{ vehicle.city }}
+        </p>
+
+        <div class="mb-8">
+            <h4 class="font-bold text-lg border-b pb-2 mb-4">Specifications</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span class="font-semibold text-gray-500">Brand</span>
+                    <span>{{ vehicle.brand }}</span>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span class="font-semibold text-gray-500">Model</span>
+                    <span>{{ vehicle.model }}</span>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span class="font-semibold text-gray-500">Year</span>
+                    <span>{{ vehicle.year }}</span>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span class="font-semibold text-gray-500">Mileage</span>
+                    <span>{{ vehicle.mileage }} km</span>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span class="font-semibold text-gray-500">Fuel</span>
+                    <span>{{ vehicle.fuel_type }}</span>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span class="font-semibold text-gray-500">Transmission</span>
+                    <span>{{ vehicle.transmission }}</span>
+                </div>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <span class="font-semibold text-gray-500">Condition</span>
+                    <span>{{ vehicle.condition }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h4 class="font-bold text-lg border-b pb-2 mb-4">Description</h4>
+            <p class="text-gray-600 leading-relaxed">{{ vehicle.description }}</p>
+        </div>
+
+        {% with wa_num=vehicle.whatsapp_number|default:site_settings.support_whatsapp_number %}
+        {% if wa_num %}
+        <a href="https://wa.me/{{ wa_num }}?text={{ vehicle.whatsapp_message|urlencode }}" target="_blank" rel="noopener noreferrer"
+            class="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white py-4 rounded-xl font-bold text-lg hover:brightness-110 transition-all shadow-lg">
+            <i class="fab fa-whatsapp text-2xl"></i>
+            WhatsApp Seller
+        </a>
+        {% endif %}
+        {% endwith %}
+        </div>
+    </div>
+
+    {% if gallery_images %}
+    <div class="border-t border-gray-100 bg-gray-50 px-6 py-4">
+        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">More Images</h4>
+        <div class="flex gap-3 overflow-x-auto">
+            {% for img in gallery_images %}
+            <img src="{{ img.resolved_url }}"
+                onclick="document.getElementById('main-image').src=this.src"
+                alt="{{ vehicle.title }} thumbnail"
+                class="w-28 h-20 object-cover rounded-lg cursor-pointer border border-transparent hover:border-green-700 transition-all flex-shrink-0">
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

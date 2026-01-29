@@ -22,6 +22,7 @@ class VehicleListView(ListView):
                 | Q(description__icontains=query)
                 | Q(features_text__icontains=query)
                 | Q(price_text__icontains=query)
+                | Q(fuel_type__icontains=query)
             )
         return queryset
 
@@ -42,3 +43,14 @@ class VehicleDetailView(DetailView):
             .select_related('category')
             .prefetch_related('images')
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vehicle = context['vehicle']
+        primary = vehicle.primary_image
+        if primary:
+            gallery_qs = vehicle.images.exclude(id=primary.id)
+        else:
+            gallery_qs = vehicle.images.all()
+        context['gallery_images'] = [img for img in gallery_qs if img.resolved_url]
+        return context

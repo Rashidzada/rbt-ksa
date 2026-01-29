@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,8 +20,9 @@
     <!-- Navigation -->
     <nav class="sticky top-0 z-40 glass-effect border-b border-gray-200 py-4 px-6 flex justify-between items-center">
         <a href="{% url 'core:home' %}" class="text-2xl font-bold text-green-700" title="Riyadh Al Bilad Transport for KSA">RBT <span class="text-gray-700">KSA</span></a>
-        <div>
+        <div class="flex items-center gap-6">
             <a href="{% url 'core:home' %}" class="text-gray-600 hover:text-green-700 font-medium">Home</a>
+            <a href="{% url 'sales:vehicle_list' %}" class="text-gray-600 hover:text-green-700 font-medium">Vehicles for Sale</a>
         </div>
     </nav>
 
@@ -63,7 +64,8 @@
         
         <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm">
             <div class="bg-gray-100 p-3 rounded-lg mr-8">
-                Hello! How can I help you today?
+                <strong>Welcome to RBT KSA!</strong><br>
+                Are you looking to book transport or buy a vehicle?
             </div>
         </div>
         
@@ -118,12 +120,32 @@
             }
         }
 
+        function escapeHtml(value) {
+            return value.replace(/[&<>"']/g, (match) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match]));
+        }
+
+        function formatBotMessage(text) {
+            const escaped = escapeHtml(text);
+            const withBold = escaped.replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>');
+            return withBold.replace(/\\n/g, '<br>');
+        }
+
         function addMessage(text, sender) {
             const div = document.createElement('div');
             div.className = sender === 'user' 
                 ? 'bg-green-100 p-3 rounded-lg ml-8 text-right' 
                 : 'bg-gray-100 p-3 rounded-lg mr-8';
-            div.innerText = text;
+            if (sender === 'user') {
+                div.innerText = text;
+            } else {
+                div.innerHTML = formatBotMessage(text);
+            }
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }

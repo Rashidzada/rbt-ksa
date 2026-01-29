@@ -1,4 +1,4 @@
-"""
+﻿"""
 URL configuration for config project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.core.urls')),
     path('', include('apps.catalog.urls')),
+    path('sale/', include('apps.sales.urls')),
     path('api/', include('apps.chatbot.urls')),
 ]
 

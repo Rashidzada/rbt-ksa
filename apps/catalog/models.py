@@ -22,11 +22,23 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 class Vehicle(models.Model):
+    FUEL_PETROL = 'petrol'
+    FUEL_DIESEL = 'diesel'
+    FUEL_HYBRID = 'hybrid'
+    FUEL_ELECTRIC = 'electric'
+    FUEL_CHOICES = [
+        (FUEL_PETROL, 'Petrol'),
+        (FUEL_DIESEL, 'Diesel'),
+        (FUEL_HYBRID, 'Hybrid'),
+        (FUEL_ELECTRIC, 'Electric'),
+    ]
+
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='vehicles')
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
     price_text = models.CharField(max_length=100, help_text="e.g. 500 SAR / Day")
     capacity_text = models.CharField(max_length=100, help_text="e.g. 4 Seats")
+    fuel_type = models.CharField(max_length=20, choices=FUEL_CHOICES, default=FUEL_PETROL)
     description = models.TextField()
     features_text = models.TextField(help_text="Separate features with a comma")
     whatsapp_number = models.CharField(max_length=20, blank=True, help_text="Optional: specific number for this vehicle")

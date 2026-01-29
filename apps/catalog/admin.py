@@ -13,8 +13,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'price_text', 'capacity_text', 'is_active')
-    list_filter = ('category', 'is_active')
+    list_display = ('name', 'category', 'price_text', 'capacity_text', 'fuel_type', 'is_active')
+    list_filter = ('category', 'fuel_type', 'is_active')
     search_fields = ('name', 'description', 'features_text')
     prepopulated_fields = {'slug': ('name',)}
     inlines = [VehicleImageInline]
