@@ -25,19 +25,7 @@
 
 <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
     <div class="flex flex-col lg:flex-row">
-        <div class="lg:w-1/2">
-            <div class="relative h-[400px] lg:h-full bg-gray-100">
-                {% with primary_image=vehicle.primary_image %}
-                {% if primary_image and primary_image.resolved_url %}
-                <img id="main-image" src="{{ primary_image.resolved_url }}" alt="{{ vehicle.title }}" class="w-full h-full object-cover">
-                {% else %}
-                <div class="w-full h-full flex items-center justify-center text-gray-400">
-                    <i class="fas fa-car text-5xl"></i>
-                </div>
-                {% endif %}
-                {% endwith %}
-            </div>
-        </div>
+        {% include 'includes/vehicle_gallery.html' with primary_image=vehicle.primary_image gallery_images=gallery_images vehicle_label=vehicle.title %}
 
         <div class="lg:w-1/2 p-8 lg:p-12">
         <span class="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 {% if vehicle.status == 'available' %}bg-green-100 text-green-700{% else %}bg-gray-200 text-gray-600{% endif %}">
@@ -99,19 +87,5 @@
         {% endwith %}
         </div>
     </div>
-
-    {% if gallery_images %}
-    <div class="border-t border-gray-100 bg-gray-50 px-6 py-4">
-        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">More Images</h4>
-        <div class="flex gap-3 overflow-x-auto">
-            {% for img in gallery_images %}
-            <img src="{{ img.resolved_url }}"
-                onclick="document.getElementById('main-image').src=this.src"
-                alt="{{ vehicle.title }} thumbnail"
-                class="w-28 h-20 object-cover rounded-lg cursor-pointer border border-transparent hover:border-green-700 transition-all flex-shrink-0">
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

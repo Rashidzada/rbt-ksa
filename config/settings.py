@@ -40,6 +40,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 # External services
 DEEPSEEK_API_KEY = env('DEEPSEEK_API_KEY', default='')
 SUPPORT_WHATSAPP_NUMBER = env('SUPPORT_WHATSAPP_NUMBER', default='')
+SUPPORT_EMAIL = env('SUPPORT_EMAIL', default='')
 
 
 # Application definition

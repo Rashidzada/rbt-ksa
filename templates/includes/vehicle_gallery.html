@@ -1,0 +1,107 @@
+<div class="vehicle-gallery lg:w-1/2 bg-gradient-to-b from-gray-100 to-gray-50 p-4 sm:p-6 lg:p-8">
+    <div class="space-y-4" data-vehicle-gallery>
+        <div class="vehicle-gallery-stage relative overflow-hidden rounded-2xl bg-gray-200 shadow-inner">
+            <button type="button"
+                class="block w-full h-full vehicle-gallery-main-button focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-100"
+                data-gallery-main-button
+                aria-label="Open full screen image gallery for {{ vehicle_label }}">
+                <img
+                    data-gallery-main-image
+                    src="{% if primary_image and primary_image.resolved_url %}{{ primary_image.resolved_url }}{% elif gallery_images %}{{ gallery_images.0.resolved_url }}{% else %}data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=={% endif %}"
+                    alt="{{ vehicle_label }}"
+                    class="vehicle-gallery-image h-full w-full object-cover"
+                    decoding="async"
+                    {% if primary_image and primary_image.resolved_url %}loading="eager"{% else %}loading="lazy"{% endif %}
+                >
+            </button>
+
+            <div data-gallery-placeholder class="absolute inset-0 hidden items-center justify-center bg-gray-200 text-gray-500">
+                <div class="text-center">
+                    <i class="fas fa-image text-4xl mb-2"></i>
+                    <p class="text-sm font-semibold">Image unavailable</p>
+                </div>
+            </div>
+
+            <button type="button"
+                class="vehicle-gallery-nav absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 text-white w-10 h-10 flex items-center justify-center hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                data-gallery-prev
+                aria-label="Previous image">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button type="button"
+                class="vehicle-gallery-nav absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 text-white w-10 h-10 flex items-center justify-center hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                data-gallery-next
+                aria-label="Next image">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+
+            <p data-gallery-counter class="absolute bottom-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white">
+                1 / 1
+            </p>
+        </div>
+
+        <div data-gallery-thumbs class="vehicle-gallery-thumbs flex gap-3 overflow-x-auto pb-1">
+            {% if primary_image and primary_image.resolved_url %}
+            <button type="button"
+                data-gallery-thumb
+                data-gallery-src="{{ primary_image.resolved_url }}"
+                data-gallery-alt="{{ vehicle_label }} image 1"
+                class="vehicle-gallery-thumb is-active">
+                <img src="{{ primary_image.resolved_url }}"
+                    alt="{{ vehicle_label }} thumbnail 1"
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async">
+            </button>
+            {% endif %}
+
+            {% for img in gallery_images %}
+            <button type="button"
+                data-gallery-thumb
+                data-gallery-src="{{ img.resolved_url }}"
+                data-gallery-alt="{{ vehicle_label }} image {% if primary_image and primary_image.resolved_url %}{{ forloop.counter|add:1 }}{% else %}{{ forloop.counter }}{% endif %}"
+                class="vehicle-gallery-thumb">
+                <img src="{{ img.resolved_url }}"
+                    alt="{{ vehicle_label }} thumbnail {% if primary_image and primary_image.resolved_url %}{{ forloop.counter|add:1 }}{% else %}{{ forloop.counter }}{% endif %}"
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async">
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="vehicle-gallery-modal" data-gallery-modal hidden tabindex="-1" role="dialog" aria-modal="true" aria-label="{{ vehicle_label }} image viewer">
+        <button type="button"
+            class="absolute top-4 right-4 z-20 rounded-full bg-black/55 text-white w-11 h-11 flex items-center justify-center hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            data-gallery-close
+            aria-label="Close gallery">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <button type="button"
+            class="vehicle-gallery-nav absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/55 text-white w-12 h-12 flex items-center justify-center hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            data-gallery-prev
+            aria-label="Previous image">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button type="button"
+            class="vehicle-gallery-nav absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/55 text-white w-12 h-12 flex items-center justify-center hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            data-gallery-next
+            aria-label="Next image">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div data-gallery-modal-stage class="vehicle-gallery-modal-stage relative w-[96vw] max-w-6xl">
+            <img data-gallery-modal-image
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                alt="{{ vehicle_label }}"
+                class="vehicle-gallery-image h-full w-full object-contain"
+                decoding="async">
+        </div>
+
+        <p data-gallery-modal-counter class="absolute bottom-6 rounded-full bg-black/55 px-4 py-2 text-sm font-semibold text-white">
+            1 / 1
+        </p>
+    </div>
+</div>

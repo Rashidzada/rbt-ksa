@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,6 +13,27 @@
         .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
         .chat-widget { transition: all 0.25s ease-in-out; }
         .chat-hidden { transform: translateY(16px) scale(0.98); opacity: 0; pointer-events: none; }
+        .vehicle-gallery-stage { aspect-ratio: 4 / 3; touch-action: pan-y; }
+        .vehicle-gallery-main-button { aspect-ratio: 4 / 3; }
+        .vehicle-gallery-modal { position: fixed; inset: 0; z-index: 70; background: rgba(2, 6, 23, 0.92); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .vehicle-gallery-modal-stage { aspect-ratio: 16 / 10; max-height: 84vh; touch-action: pan-y; }
+        .vehicle-gallery-image { transition: opacity 0.22s ease, transform 0.22s ease; }
+        .vehicle-gallery-image.is-loading { opacity: 0.4; transform: scale(1.01); }
+        .vehicle-gallery-thumbs { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: #9ca3af transparent; }
+        .vehicle-gallery-thumbs::-webkit-scrollbar { height: 7px; }
+        .vehicle-gallery-thumbs::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 99px; }
+        .vehicle-gallery-thumbs::-webkit-scrollbar-track { background: transparent; }
+        .vehicle-gallery-thumb { width: 96px; min-width: 96px; aspect-ratio: 4 / 3; border: 2px solid transparent; border-radius: 0.75rem; overflow: hidden; opacity: 0.72; transition: border-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease; }
+        .vehicle-gallery-thumb:hover,
+        .vehicle-gallery-thumb:focus-visible { opacity: 1; transform: translateY(-1px); }
+        .vehicle-gallery-thumb.is-active { border-color: #15803d; opacity: 1; }
+        @media (max-width: 640px) {
+            .vehicle-gallery-stage,
+            .vehicle-gallery-main-button { aspect-ratio: 1 / 1; }
+            .vehicle-gallery-thumb { width: 82px; min-width: 82px; }
+            .vehicle-gallery-nav { width: 2.25rem; height: 2.25rem; }
+            .vehicle-gallery-modal-stage { width: 100%; aspect-ratio: 4 / 3; }
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -121,7 +143,7 @@
         }
 
         function escapeHtml(value) {
-            return value.replace(/[&<>"']/g, (match) => ({
+            return String(value || '').replace(/[&<>"']/g, (match) => ({
                 '&': '&amp;',
                 '<': '&lt;',
                 '>': '&gt;',
@@ -130,10 +152,18 @@
             }[match]));
         }
 
+        function decodeHtmlEntities(value) {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = String(value || '');
+            return textarea.value;
+        }
+
         function formatBotMessage(text) {
-            const escaped = escapeHtml(text);
-            const withBold = escaped.replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>');
-            return withBold.replace(/\\n/g, '<br>');
+            const normalized = decodeHtmlEntities(text).replace(/\r\n/g, '\n');
+            const escaped = escapeHtml(normalized);
+            const withoutHeadingMarks = escaped.replace(/^#{1,6}\s*/gm, '');
+            const withBold = withoutHeadingMarks.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            return withBold.replace(/\n/g, '<br>');
         }
 
         function addMessage(text, sender) {
@@ -153,6 +183,7 @@
         chatSend.onclick = sendMessage;
         chatInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
     </script>
+    <script src="{% static 'js/vehicle-gallery.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

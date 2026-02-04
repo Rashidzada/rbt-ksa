@@ -1,6 +1,8 @@
 import logging
+import re
 from django.conf import settings
 from apps.catalog.models import Category, Vehicle
+from apps.core.models import SiteSetting
 from apps.sales.models import VehicleForSale
 
 try:
@@ -12,10 +14,44 @@ logger = logging.getLogger(__name__)
 
 class ChatService:
     @staticmethod
+    def _normalize_whatsapp_number(raw_value, fallback_value):
+        value = (raw_value or '').strip()
+        digits = re.sub(r'\D', '', value)
+        if not digits:
+            digits = re.sub(r'\D', '', fallback_value)
+        return f"+{digits}" if digits else fallback_value
+
+    @staticmethod
     def get_reply(message, context=None):
         message = message or ''
         message_lower = message.lower().strip()
         context = context or {}
+
+        fallback_whatsapp = "+966510604220"
+        fallback_email = "syedrahmanqlg@gmail.com"
+        site_setting = SiteSetting.objects.first()
+        configured_whatsapp = (
+            site_setting.support_whatsapp_number
+            if site_setting and site_setting.support_whatsapp_number
+            else (getattr(settings, "SUPPORT_WHATSAPP_NUMBER", "") or "")
+        )
+        support_whatsapp = ChatService._normalize_whatsapp_number(configured_whatsapp, fallback_whatsapp)
+        support_email = (getattr(settings, "SUPPORT_EMAIL", "") or "").strip() or fallback_email
+        support_whatsapp_digits = re.sub(r"\D", "", support_whatsapp)
+        support_whatsapp_link = (
+            f"https://wa.me/{support_whatsapp_digits}" if support_whatsapp_digits else ""
+        )
+
+        def contact_block():
+            if support_whatsapp_link:
+                return (
+                    f"WhatsApp: {support_whatsapp} ({support_whatsapp_link})\n"
+                    f"Email: {support_email}"
+                )
+            return (
+                f"WhatsApp: {support_whatsapp}\n"
+                f"Email: {support_email}"
+            )
 
         categories = list(Category.objects.filter(is_active=True))
         vehicles = list(
@@ -42,24 +78,35 @@ class ChatService:
         sell_keywords = ['sell', 'selling', 'sell my']
         book_keywords = ['book', 'booking', 'rent', 'hire', 'transport', 'service']
         model_keywords = ['model', 'models']
+        contact_keywords = ['contact', 'phone', 'number', 'call', 'whatsapp', 'email']
 
         if not message_lower or any(message_lower == k or message_lower.startswith(k + ' ') for k in greeting_keywords):
             return (
                 "**Welcome to RBT KSA!** Are you looking to book transport or buy a vehicle?\n"
-                "You can ask about categories, prices, or vehicles for sale."
+                "You can ask about categories, prices, or vehicles for sale.\n"
+                f"{contact_block()}"
             )
 
         sale_match = find_match(sale_vehicles, 'title')
         booking_match = find_match(vehicles, 'name')
 
+        if any(k in message_lower for k in contact_keywords):
+            return (
+                "You can contact us directly:\n"
+                f"{contact_block()}"
+            )
+
         if any(k in message_lower for k in sell_keywords):
-            wa_number = settings.SUPPORT_WHATSAPP_NUMBER
-            if wa_number:
+            if support_whatsapp_link:
                 return (
                     "To sell your vehicle, please contact us on WhatsApp: "
-                    f"wa.me/{wa_number}. We will guide you."
+                    f"{support_whatsapp} ({support_whatsapp_link}).\n"
+                    f"Email: {support_email}"
                 )
-            return "To sell your vehicle, please contact our support WhatsApp number."
+            return (
+                "To sell your vehicle, please contact our support team.\n"
+                f"{contact_block()}"
+            )
 
         if sale_match:
             price = format_price(sale_match.price)
@@ -130,7 +177,14 @@ class ChatService:
             if OpenAI is None:
                 logger.warning("OpenAI SDK not installed. Run: pip install openai")
             else:
-                reply = ChatService._deepseek_reply(message, categories, vehicles, sale_vehicles)
+                reply = ChatService._deepseek_reply(
+                    message,
+                    categories,
+                    vehicles,
+                    sale_vehicles,
+                    support_whatsapp,
+                    support_email,
+                )
                 if reply:
                     return reply
 
@@ -138,11 +192,12 @@ class ChatService:
         category_names = ", ".join([cat.name for cat in categories]) or "Hotels, Schools, Corporate, Luxury"
         return (
             "**Welcome to RBT KSA!** Are you looking to book transport or buy a vehicle?\n"
-            f"You can ask about categories ({category_names}) or vehicles for sale."
+            f"You can ask about categories ({category_names}) or vehicles for sale.\n"
+            f"{contact_block()}"
         )
 
     @staticmethod
-    def _deepseek_reply(message, categories, vehicles, sale_vehicles):
+    def _deepseek_reply(message, categories, vehicles, sale_vehicles, support_whatsapp, support_email):
         category_names = ", ".join([cat.name for cat in categories]) or "Hotels, Schools, Corporate, Luxury"
         vehicle_lines = [
             f"{v.name} ({v.category.name}) - {v.price_text}, {v.capacity_text}, {v.get_fuel_type_display()}"
@@ -159,6 +214,9 @@ class ChatService:
             f"Categories: {category_names}. "
             f"Booking vehicles: {catalog_context}. "
             f"Vehicles for sale: {sale_context}. "
+            f"Support WhatsApp: {support_whatsapp}. "
+            f"Support Email: {support_email}. "
+            "Use plain text only and avoid markdown headings or HTML entities. "
             "If you don't know the answer, ask if the user wants booking or buying."
         )
 

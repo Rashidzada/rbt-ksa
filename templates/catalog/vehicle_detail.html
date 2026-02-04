@@ -27,16 +27,7 @@
 
 <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
     <div class="flex flex-col lg:flex-row">
-        <!-- Gallery -->
-        <div class="lg:w-1/2">
-            <div class="relative h-[400px] lg:h-full bg-gray-100">
-                {% with primary_image=vehicle.primary_image %}
-                <img id="main-image"
-                    src="{% if primary_image %}{{ primary_image.resolved_url }}{% else %}https://via.placeholder.com/800x600?text=No+Image{% endif %}"
-                    alt="{{ vehicle.name }}" class="w-full h-full object-cover">
-                {% endwith %}
-            </div>
-        </div>
+        {% include 'includes/vehicle_gallery.html' with primary_image=vehicle.primary_image gallery_images=gallery_images vehicle_label=vehicle.name %}
 
         <!-- Info -->
         <div class="lg:w-1/2 p-8 lg:p-12">
@@ -92,19 +83,5 @@
         {% endwith %}
         </div>
     </div>
-
-    {% if gallery_images %}
-    <div class="border-t border-gray-100 bg-gray-50 px-6 py-4">
-        <h4 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">More Images</h4>
-        <div class="flex gap-3 overflow-x-auto">
-            {% for img in gallery_images %}
-            <img src="{{ img.resolved_url }}"
-                onclick="document.getElementById('main-image').src=this.src"
-                alt="{{ vehicle.name }} thumbnail"
-                class="w-28 h-20 object-cover rounded-lg cursor-pointer border border-transparent hover:border-green-700 transition-all flex-shrink-0">
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
